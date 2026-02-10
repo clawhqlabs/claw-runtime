@@ -18,14 +18,14 @@ async function main(): Promise<void> {
   const config = await loadJsonConfig<RuntimeConfig>(configPath);
 
   const controlPlane: ControlPlanePort = new HttpControlPlaneClient(
-    config.controlPlane
+    config.controlPlane,
   );
 
   const planner = new SimplePlanner([
     {
       action: "log",
-      payload: { message: "Hello from OpenClaw Runtime" }
-    }
+      payload: { message: "Hello from Claw Runtime" },
+    },
   ]);
 
   const executor = new SimpleExecutor();
@@ -38,13 +38,13 @@ async function main(): Promise<void> {
 
   const agent = new AgentRuntime(
     { missionId: config.missionId, maxSteps: config.maxSteps },
-    { planner, executor, controlPlane }
+    { planner, executor, controlPlane },
   );
 
   await agent.run();
 }
 
 main().catch((error) => {
-  console.error("OpenClaw Runtime error:", error);
+  console.error("Claw Runtime error:", error);
   process.exit(1);
 });

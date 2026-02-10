@@ -1,5 +1,5 @@
 {
-  "name": "openclaw-runtime",
+  "name": "claw-runtime",
   "version": "0.1.0",
   "description": "Execution runtime for autonomous agents with external control plane approval.",
   "license": "Apache-2.0",

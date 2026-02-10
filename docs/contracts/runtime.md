@@ -1,6 +1,6 @@
 # Runtime Contract
 
-OpenClaw Runtime follows a strict propose/approve/execute loop.
+Claw Runtime follows a strict propose/approve/execute loop.
 The runtime never authorizes actions on its own.
 
 ## Control Plane API
