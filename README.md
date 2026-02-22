@@ -116,6 +116,8 @@ claw-runtime/
 ├── core/
 ├── ports/
 ├── adapters/
+├── api/
+├── plugins/
 ├── tools/
 ├── cli/
 ├── docs/
@@ -138,6 +140,19 @@ The core:
 - **does not** know how approvals are decided
 - **does not** perform any I/O directly
 - **does not** contain policy, billing, or tenant logic
+
+### `api/` — Runtime Control API
+
+The runtime can expose an HTTP API for control planes to:
+
+- query status
+- approve/reject proposals
+- start/stop execution
+
+### `plugins/` — Runtime Plugins
+
+Plugins extend runtime behavior via hooks (before/after tool calls, memory writes,
+runtime errors) without embedding policy directly in the core.
 
 This layer depends only on abstract ports, never on concrete adapters.
 

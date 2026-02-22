@@ -5,6 +5,8 @@ import type {
   StepProposal,
   StepResult
 } from "../ports/control-plane";
+import type { PluginHost } from "./plugins";
+import type { ProposalStore } from "./proposals";
 
 export interface AgentConfig {
   missionId: string;
@@ -15,12 +17,16 @@ export interface AgentDependencies {
   planner: Planner;
   executor: Executor;
   controlPlane: ControlPlanePort;
+  plugins?: PluginHost;
+  proposals?: ProposalStore;
 }
 
 export class AgentRuntime {
   private readonly planner: Planner;
   private readonly executor: Executor;
   private readonly controlPlane: ControlPlanePort;
+  private readonly plugins?: PluginHost;
+  private readonly proposals?: ProposalStore;
   private readonly config: AgentConfig;
   private readonly history: Step[] = [];
 
@@ -29,6 +35,12 @@ export class AgentRuntime {
     this.planner = deps.planner;
     this.executor = deps.executor;
     this.controlPlane = deps.controlPlane;
+    this.plugins = deps.plugins;
+    this.proposals = deps.proposals;
+  }
+
+  getMissionId(): string {
+    return this.config.missionId;
   }
 
   async run(): Promise<void> {
@@ -52,7 +64,16 @@ export class AgentRuntime {
         payload: step.payload
       };
 
-      const decision = await this.controlPlane.proposeStep(proposal);
+      let decision = await this.controlPlane.proposeStep(proposal);
+      if (this.proposals) {
+        this.proposals.create({
+          id: step.id,
+          missionId: this.config.missionId,
+          action: step.action,
+          payload: step.payload
+        });
+        decision = await this.proposals.awaitDecision(step.id);
+      }
       if (!decision.approved) {
         step.status = "rejected";
         this.history.push(step);
@@ -63,7 +84,23 @@ export class AgentRuntime {
       }
 
       step.status = "approved";
-      const result = await this.executor.execute(step);
+      if (this.plugins) {
+        await this.plugins.emitBeforeTool(step);
+      }
+
+      let result;
+      try {
+        result = await this.executor.execute(step);
+        if (this.plugins) {
+          await this.plugins.emitAfterTool(step, result);
+        }
+      } catch (error) {
+        const err = error instanceof Error ? error : new Error("Unknown error");
+        if (this.plugins) {
+          await this.plugins.emitRuntimeError(err);
+        }
+        throw err;
+      }
 
       const report: StepResult = {
         missionId: this.config.missionId,

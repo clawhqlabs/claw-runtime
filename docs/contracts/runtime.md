@@ -47,3 +47,32 @@ StepResult {
 - All steps are proposed before execution.
 - Every approved step is reported with a result.
 - Rejected steps are never executed.
+
+## Runtime Hooks (Plugins)
+
+Runtime plugins can subscribe to:
+
+- `beforeToolCall`
+- `afterToolCall`
+- `onMemoryWrite`
+- `onRuntimeError`
+
+## Runtime API (Control Plane -> Runtime)
+
+The runtime can expose an HTTP API for remote control and approvals:
+
+- `GET /health`
+- `GET /status`
+- `GET /proposals`
+- `POST /approve/:id`
+- `POST /reject/:id`
+- `POST /run`
+- `POST /shutdown`
+
+If `RUNTIME_API_TOKEN` (or `runtimeApi.authToken`) is set, the runtime expects:
+
+`Authorization: Bearer <token>`
+
+## Runtime → Control Plane Protocol
+
+See `docs/contracts/runtime-contract.md` for the versioned outbound protocol.
