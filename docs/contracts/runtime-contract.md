@@ -23,9 +23,9 @@ The payload is a discriminated union keyed by `type`.
 ```
 RuntimeEvent {
   protocolVersion: "1.0"
-  type: "heartbeat" | "watchdog"
+  type: "heartbeat" | "watchdog" | "register"
   timestamp: string (ISO-8601)
-  payload: HeartbeatPayload | WatchdogPayload
+  payload: HeartbeatPayload | WatchdogPayload | RegisterPayload
 }
 
 HeartbeatPayload {
@@ -41,6 +41,12 @@ WatchdogPayload {
     stack?: string
     name?: string
   }
+}
+
+RegisterPayload {
+  runtimeId: string
+  nodeEnv?: string
+  runtimeVersion: string
 }
 ```
 

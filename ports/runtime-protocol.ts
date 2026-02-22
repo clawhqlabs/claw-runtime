@@ -2,7 +2,7 @@ export const PROTOCOL_VERSION = "1.0" as const;
 
 export type ProtocolVersion = typeof PROTOCOL_VERSION;
 
-export type RuntimeEventType = "heartbeat" | "watchdog";
+export type RuntimeEventType = "heartbeat" | "watchdog" | "register";
 
 export interface RuntimeEventBase {
   protocolVersion: ProtocolVersion;
@@ -25,6 +25,12 @@ export interface WatchdogPayload {
   };
 }
 
+export interface RegisterPayload {
+  runtimeId: string;
+  nodeEnv?: string;
+  runtimeVersion: string;
+}
+
 export interface HeartbeatEvent extends RuntimeEventBase {
   type: "heartbeat";
   payload: HeartbeatPayload;
@@ -35,4 +41,9 @@ export interface WatchdogEvent extends RuntimeEventBase {
   payload: WatchdogPayload;
 }
 
-export type RuntimeEvent = HeartbeatEvent | WatchdogEvent;
+export interface RegisterEvent extends RuntimeEventBase {
+  type: "register";
+  payload: RegisterPayload;
+}
+
+export type RuntimeEvent = HeartbeatEvent | WatchdogEvent | RegisterEvent;

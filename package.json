@@ -14,6 +14,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node dist/cli/openclaw.js",
+    "start:cli": "node dist/cli/openclaw.js",
     "test": "npm run build && node test/approval-bypass.test.js && node test/checklist.test.js"
   },
   "dependencies": {},

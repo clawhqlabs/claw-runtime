@@ -76,3 +76,11 @@ If `RUNTIME_API_TOKEN` (or `runtimeApi.authToken`) is set, the runtime expects:
 ## Runtime → Control Plane Protocol
 
 See `docs/contracts/runtime-contract.md` for the versioned outbound protocol.
+
+## Environment Configuration
+
+Runtime supports the following environment variables:
+
+- `CONTROL_PLANE_URL`
+- `RUNTIME_TOKEN`
+- `NODE_ENV`

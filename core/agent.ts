@@ -29,6 +29,7 @@ export class AgentRuntime {
   private readonly proposals?: ProposalStore;
   private readonly config: AgentConfig;
   private readonly history: Step[] = [];
+  private shouldStop = false;
 
   constructor(config: AgentConfig, deps: AgentDependencies) {
     this.config = config;
@@ -39,6 +40,10 @@ export class AgentRuntime {
     this.proposals = deps.proposals;
   }
 
+  stop(): void {
+    this.shouldStop = true;
+  }
+
   getMissionId(): string {
     return this.config.missionId;
   }
@@ -47,6 +52,9 @@ export class AgentRuntime {
     const maxSteps = this.config.maxSteps ?? 50;
 
     for (let i = 0; i < maxSteps; i += 1) {
+      if (this.shouldStop) {
+        return;
+      }
       const context: MissionContext = {
         missionId: this.config.missionId,
         history: [...this.history]
